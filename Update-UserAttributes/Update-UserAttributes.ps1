@@ -66,12 +66,14 @@ Function main
 {
     ConnectModules
 
+    # Since I'm using naive input detection let's define the Account list now
+    $AccountList = @()
+
     if($CSVFilePath)
     {
         $CSVFilePath = $CSVFilePath.Trim()
 
         # Import the CSV file into an array of objects if provided
-        $AccountList = @()
         try
         {
             $csvImportData = Import-Csv -Path $CSVFilePath
@@ -81,24 +83,24 @@ Function main
             Write-Host $_.Exception.Message -ForegroundColor Red
             Exit
         }
+
+        # Run through the imported CSV data and builds the list of updates
+        foreach ($item in $csvImportData)
+        {
+            $tempHash = @{}
+            $item.psobject.properties | ForEach-Object { $tempHash[$_.Name.Trim("'")] = $_.Value.Trim("'") }
+            $AccountList += $tempHash
+        }
     }
     elseif($UserId)
     {
-        # When working with only one user let's quick and dirty build the array as if we had a single entry CSV import
-        $AccountList = @()
+        # When working with only one user let's quick and dirty build the array as if we had a single entry CSV import. Only supports a single attribute update at a time but hey, it works and is easy to use for quick updates without needing to build a CSV file.
         $AccountList += @{
             'UserId'             = $UserId
             $Attribute           = $Value
         }
     }
 
-    $AccountList = @()
-    foreach ($item in $csvImportData)
-    {
-        $tempHash = @{}
-        $item.psobject.properties | ForEach-Object { $tempHash[$_.Name.Trim("'")] = $_.Value.Trim("'") }
-        $AccountList += $tempHash
-    }
 
     Foreach( $account in $AccountList)
     {
