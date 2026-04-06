@@ -14,9 +14,6 @@
     .PARAMETER Value
         Used in conjunction with the Attribute parameter. The new contents to store in the attribute.
 
-    .PARAMETER WhatIf
-        Shows what would happen if the cmdlet runs. The cmdlet is not run.
-
     .EXAMPLE
         PS C:\> .\Update-UserAttributes.ps1 -CSVFilePath userlist.csv
         Updates the list of users and corresponding types from the input file. Must contain column "UserId" as primary key. All other columns must exactly match the attribute name in Entra ID.
@@ -29,7 +26,7 @@
         Version 1.0
 #>
 
-[CmdletBinding(DefaultParameterSetName="File", SupportsShouldProcess=$True)]
+[CmdletBinding(DefaultParameterSetName="File")]
 param(
 
     [Parameter(Mandatory = $true, ParameterSetName="File")][string]$CSVFilePath,
