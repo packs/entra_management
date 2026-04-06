@@ -41,7 +41,7 @@ Function ConnectModules
 
     try
     {
-        Connect-MgGraph -Scopes Directory.Read.All,RoleManagement.Read.Directory -ErrorAction SilentlyContinue -Errorvariable ConnectionError -NoWelcome
+        Connect-MgGraph -Scopes Directory.ReadWrite.All,User.ReadWrite.All -ErrorAction SilentlyContinue -Errorvariable ConnectionError -NoWelcome
         if($ConnectionError -ne $null)
         {
             Write-Host $ConnectionError -Foregroundcolor Red
