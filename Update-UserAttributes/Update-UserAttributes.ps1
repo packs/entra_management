@@ -35,7 +35,7 @@ param(
     [Parameter(Mandatory = $true, ParameterSetName="User")][string]$Value
 )
 
-Function ConnectModules 
+Function Connect-Modules
 {
     Write-Host "Connecting modules(Microsoft Graph)...`n"
 
@@ -56,15 +56,15 @@ Function ConnectModules
     Write-Host "Microsoft Graph PowerShell module is connected successfully" -ForegroundColor Cyan
 }
 
-Function Disconnect_Modules
+Function Disconnect-Modules
 {
     Disconnect-MgGraph -ErrorAction SilentlyContinue|  Out-Null
     Exit
 }
 
-Function main
+Function Main
 {
-    ConnectModules
+    Connect-Modules
 
     # Since I'm using naive input detection let's define the Account list now
     $AccountList = @()
@@ -138,7 +138,7 @@ Function main
 
     }
 
-    Disconnect_Modules
+    Disconnect-Modules
 }
 
-. main
+Main
