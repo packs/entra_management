@@ -14,9 +14,6 @@
     .PARAMETER Value
         Used in conjunction with the Attribute parameter. The new contents to store in the attribute.
 
-    .PARAMETER Output
-        Directory path to save log files
-
     .PARAMETER WhatIf
         Shows what would happen if the cmdlet runs. The cmdlet is not run.
 
@@ -38,8 +35,7 @@ param(
     [Parameter(Mandatory = $true, ParameterSetName="File")][string]$CSVFilePath,
     [Parameter(Mandatory = $true, ParameterSetName="User")][string]$UserId,
     [Parameter(Mandatory = $true, ParameterSetName="User")][string]$Attribute,
-    [Parameter(Mandatory = $true, ParameterSetName="User")][string]$Value,
-    [Parameter()][string]$Output = '.\'
+    [Parameter(Mandatory = $true, ParameterSetName="User")][string]$Value
 )
 
 Function ConnectModules 
