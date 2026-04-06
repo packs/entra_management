@@ -15,15 +15,14 @@ A PowerShell script to update Entra ID user object attributes either for a singl
 - Windows PowerShell or PowerShell Core
 - `Microsoft.Graph` PowerShell module
 - Permission to update user objects in Entra ID
-- Access to Microsoft Graph with at least `Directory.Read.All` and `RoleManagement.Read.Directory` scopes
+- Access to Microsoft Graph with at least `Directory.ReadWrite.All` and `User.ReadWrite.All` scopes
 
 ## Usage
 
 ### Update from CSV file
 
 ```powershell
-.\
-Update-UserAttributes.ps1 -CSVFilePath .\userlist.csv
+.\Update-UserAttributes.ps1 -CSVFilePath .\userlist.csv
 ```
 
 - The CSV must contain a `UserId` column.
@@ -33,8 +32,7 @@ Update-UserAttributes.ps1 -CSVFilePath .\userlist.csv
 ### Update a single user attribute
 
 ```powershell
-.\
-Update-UserAttributes.ps1 -UserId user@domain.com -Attribute jobTitle -Value "Marketing Manager"
+.\Update-UserAttributes.ps1 -UserId user@domain.com -Attribute jobTitle -Value "Marketing Manager"
 ```
 
 - Use `-UserId` for a single user.
