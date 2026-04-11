@@ -1,0 +1,16 @@
+DisplayName,UserPrincipalName,MailNickname,GivenName,Surname,JobTitle,Department,OfficeLocation,UsageLocation,EmployeeId,Manager
+Sarah Mitchell,sarah.mitchell@contoso.com,sarah.mitchell,Sarah,Mitchell,Chief Executive Officer,Executive,Seattle HQ,US,EMP001,
+David Chen,david.chen@contoso.com,david.chen,David,Chen,Chief Technology Officer,Technology,Seattle HQ,US,EMP002,sarah.mitchell@contoso.com
+Rachel Torres,rachel.torres@contoso.com,rachel.torres,Rachel,Torres,Chief Financial Officer,Finance,Seattle HQ,US,EMP003,sarah.mitchell@contoso.com
+James Okafor,james.okafor@contoso.com,james.okafor,James,Okafor,VP of Engineering,Technology,Seattle HQ,US,EMP004,david.chen@contoso.com
+Priya Nair,priya.nair@contoso.com,priya.nair,Priya,Nair,VP of Product,Technology,Seattle HQ,US,EMP005,david.chen@contoso.com
+Marcus Webb,marcus.webb@contoso.com,marcus.webb,Marcus,Webb,Engineering Manager,Technology,Austin TX,US,EMP006,james.okafor@contoso.com
+Leila Ahmadi,leila.ahmadi@contoso.com,leila.ahmadi,Leila,Ahmadi,Senior Software Engineer,Technology,Austin TX,US,EMP007,marcus.webb@contoso.com
+Tom Nguyen,tom.nguyen@contoso.com,tom.nguyen,Tom,Nguyen,Software Engineer,Technology,Austin TX,US,EMP008,marcus.webb@contoso.com
+Chloe Andersen,chloe.andersen@contoso.com,chloe.andersen,Chloe,Andersen,Product Manager,Technology,Seattle HQ,US,EMP009,priya.nair@contoso.com
+Daniel Reyes,daniel.reyes@contoso.com,daniel.reyes,Daniel,Reyes,UX Designer,Technology,Seattle HQ,US,EMP010,priya.nair@contoso.com
+Fiona Gallagher,fiona.gallagher@contoso.com,fiona.gallagher,Fiona,Gallagher,Financial Analyst,Finance,Seattle HQ,US,EMP011,rachel.torres@contoso.com
+Omar Hassan,omar.hassan@contoso.com,omar.hassan,Omar,Hassan,Senior Financial Analyst,Finance,Seattle HQ,US,EMP012,rachel.torres@contoso.com
+Yuki Tanaka,yuki.tanaka@contoso.com,yuki.tanaka,Yuki,Tanaka,HR Business Partner,Human Resources,Seattle HQ,US,EMP013,sarah.mitchell@contoso.com
+Brittany Cox,brittany.cox@contoso.com,brittany.cox,Brittany,Cox,Recruiter,Human Resources,Austin TX,US,EMP014,yuki.tanaka@contoso.com
+Evan Sharma,evan.sharma@contoso.com,evan.sharma,Evan,Sharma,IT Systems Administrator,Technology,Austin TX,US,EMP015,james.okafor@contoso.com

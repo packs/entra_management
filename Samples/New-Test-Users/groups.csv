@@ -1,0 +1,8 @@
+DisplayName,MailNickname,GroupTypes,Description,Members
+All Employees,all-employees,Security,All company staff,sarah.mitchell@contoso.com;david.chen@contoso.com;rachel.torres@contoso.com;james.okafor@contoso.com;priya.nair@contoso.com;marcus.webb@contoso.com;leila.ahmadi@contoso.com;tom.nguyen@contoso.com;chloe.andersen@contoso.com;daniel.reyes@contoso.com;fiona.gallagher@contoso.com;omar.hassan@contoso.com;yuki.tanaka@contoso.com;brittany.cox@contoso.com;evan.sharma@contoso.com
+Technology,technology,Security,Technology department staff,david.chen@contoso.com;james.okafor@contoso.com;priya.nair@contoso.com;marcus.webb@contoso.com;leila.ahmadi@contoso.com;tom.nguyen@contoso.com;chloe.andersen@contoso.com;daniel.reyes@contoso.com;evan.sharma@contoso.com
+Finance,finance,Security,Finance department staff,rachel.torres@contoso.com;fiona.gallagher@contoso.com;omar.hassan@contoso.com
+Human Resources,human-resources,Security,HR department staff,yuki.tanaka@contoso.com;brittany.cox@contoso.com
+Engineering,engineering,Security,Engineering sub-team,james.okafor@contoso.com;marcus.webb@contoso.com;leila.ahmadi@contoso.com;tom.nguyen@contoso.com;evan.sharma@contoso.com
+Product and Design,product-and-design,Security,Product and UX sub-team,priya.nair@contoso.com;chloe.andersen@contoso.com;daniel.reyes@contoso.com
+Leadership,leadership,Microsoft365,Executive and VP leadership,sarah.mitchell@contoso.com;david.chen@contoso.com;rachel.torres@contoso.com;james.okafor@contoso.com;priya.nair@contoso.com;yuki.tanaka@contoso.com
