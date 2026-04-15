@@ -129,7 +129,9 @@ Function Main
 
         try
         {
-            Update-MgUser @account
+            # Convert account psobject to a hashtable for splatting. Kind of gross, but is overall clean
+            $accountSplattable = $account | ConvertTo-Json | ConvertFrom-Json  -AsHashtable
+            Update-MgUser @accountSplattable
         }
         catch
         {
