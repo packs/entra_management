@@ -60,7 +60,7 @@ Function Connect-Modules
 {
     param([hashtable]$MgParams)
 
-    Write-Information "Connecting modules(Microsoft Graph)...`n"
+    Write-Verbose "Connecting modules(Microsoft Graph)...`n"
 
     $MgParams['Scopes']        = @("Directory.ReadWrite.All", "User.ReadWrite.All")
     $MgParams['ErrorAction']   = 'SilentlyContinue'
