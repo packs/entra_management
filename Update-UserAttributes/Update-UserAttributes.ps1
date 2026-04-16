@@ -14,6 +14,22 @@
     .PARAMETER Value
         Used in conjunction with the Attribute parameter. The new contents to store in the attribute.
 
+    .PARAMETER TenantId
+        The Entra ID tenant ID to connect to. Useful for multi-tenant scenarios.
+
+    .PARAMETER ClientId
+        The client ID of an app registration to use for authentication instead of the default Microsoft Graph PowerShell app.
+
+    .PARAMETER CertificateThumbprint
+        The thumbprint of a certificate to use for app-only authentication. Must be paired with -ClientId.
+
+    .PARAMETER NoWelcome
+        Suppresses the Microsoft Graph connection banner.
+
+    .PARAMETER Environment
+        The Microsoft cloud environment to connect to. Defaults to the global endpoint.
+        Valid values: Global, USGov, USGovDoD, China
+
     .EXAMPLE
         PS C:\> .\Update-UserAttributes.ps1 -CSVFilePath userlist.csv
         Updates the list of users and corresponding types from the input file. Must contain column "UserId" as primary key. All other columns must exactly match the attribute name in Entra ID.
@@ -22,7 +38,7 @@
         Scott Pack
         scott.pack@gmail.com
 
-        Last Update: 26 November 2024
+        Last Update: 16 April 2026
         Version 1.0
 #>
 
@@ -32,39 +48,58 @@ param(
     [Parameter(Mandatory = $true, ParameterSetName="File")][string]$CSVFilePath,
     [Parameter(Mandatory = $true, ParameterSetName="User")][string]$UserId,
     [Parameter(Mandatory = $true, ParameterSetName="User")][string]$Attribute,
-    [Parameter(Mandatory = $true, ParameterSetName="User")][string]$Value
+    [Parameter(Mandatory = $true, ParameterSetName="User")][string]$Value,
+    [Parameter(Mandatory = $false)][string]$TenantId,
+    [Parameter(Mandatory = $false)][string]$ClientId,
+    [Parameter(Mandatory = $false)][string]$CertificateThumbprint,
+    [Parameter(Mandatory = $false)][bool]$NoWelcome = $true,
+    [Parameter(Mandatory = $false)][ValidateSet("Global","USGov","USGovDoD","China")][string]$Environment
 )
 
 Function Connect-Modules
 {
-    Write-Host "Connecting modules(Microsoft Graph)...`n"
+    param([hashtable]$MgParams)
+
+    Write-Verbose "Connecting modules(Microsoft Graph)...`n"
+
+    $MgParams['Scopes']        = @("Directory.ReadWrite.All", "User.ReadWrite.All")
+    $MgParams['ErrorAction']   = 'SilentlyContinue'
+    $MgParams['ErrorVariable'] = 'ConnectionError'
 
     try
     {
-        Connect-MgGraph -Scopes Directory.ReadWrite.All,User.ReadWrite.All -ErrorAction SilentlyContinue -Errorvariable ConnectionError -NoWelcome
-        if($ConnectionError -ne $null)
+        Connect-MgGraph @MgParams
+        if($ConnectionError.Count -gt 0)
         {
-            Write-Host $ConnectionError -Foregroundcolor Red
+            Write-Error $ConnectionError
             Exit
         }
     }
     catch
     {
-        Write-Host $_.Exception.message -ForegroundColor Red
+        Write-Error $_.Exception.message
         Exit
     }
-    Write-Host "Microsoft Graph PowerShell module is connected successfully" -ForegroundColor Cyan
+    Write-Verbose "Microsoft Graph PowerShell module is connected successfully"
 }
 
 Function Disconnect-Modules
 {
     Disconnect-MgGraph -ErrorAction SilentlyContinue|  Out-Null
-    Exit
 }
 
 Function Main
 {
-    Connect-Modules
+    param([hashtable]$BoundParams)
+
+    $mgParams = @{}
+    if ($BoundParams.ContainsKey('TenantId'))             { $mgParams['TenantId']             = $TenantId }
+    if ($BoundParams.ContainsKey('ClientId'))             { $mgParams['ClientId']             = $ClientId}
+    if ($BoundParams.ContainsKey('CertificateThumbprint')){ $mgParams['CertificateThumbprint']= $CertificateThumbprint }
+    if ($BoundParams.ContainsKey('Environment'))          { $mgParams['Environment']          = $Environment}
+    $mgParams['NoWelcome'] = $NoWelcome
+
+    Connect-Modules -MgParams $mgParams
 
     # Since I'm using naive input detection let's define the Account list now
     $AccountList = @()
@@ -80,7 +115,7 @@ Function Main
         }
         catch
         {
-            Write-Host $_.Exception.Message -ForegroundColor Red
+            Write-Error $_.Exception.Message
             Exit
         }
 
@@ -104,7 +139,7 @@ Function Main
 
     Foreach( $account in $AccountList)
     {
-        Write-Host "Processing", $account['UserId']
+        Write-Host "Processing $($account['UserId'])"
 
         # Check to see if the manager is being updated since that requires a separate process
         if($account['Manager'])
@@ -120,7 +155,7 @@ Function Main
             }
             catch
             {
-                Write-Host $_.Exception.Message -ForegroundColor Red
+                Write-Error $_.Exception.Message
             }
 
             #Remove the Manager field before continuing to process
@@ -135,7 +170,7 @@ Function Main
         }
         catch
         {
-            Write-Host $_.Exception.Message -ForegroundColor Red
+            Write-Error $_.Exception.Message
         }
 
     }
@@ -143,4 +178,5 @@ Function Main
     Disconnect-Modules
 }
 
-Main
+
+Main -BoundParams $PSBoundParameters
