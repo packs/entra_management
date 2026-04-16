@@ -60,7 +60,7 @@ Function Connect-Modules
 {
     param([hashtable]$MgParams)
 
-    Write-Host "Connecting modules(Microsoft Graph)...`n"
+    Write-Information "Connecting modules(Microsoft Graph)...`n"
 
     $MgParams['Scopes']        = @("Directory.ReadWrite.All", "User.ReadWrite.All")
     $MgParams['ErrorAction']   = 'SilentlyContinue'
@@ -71,16 +71,16 @@ Function Connect-Modules
         Connect-MgGraph @mgParams
         if($ConnectionError -ne $null)
         {
-            Write-Host $ConnectionError -Foregroundcolor Red
+            Write-Error $ConnectionError
             Exit
         }
     }
     catch
     {
-        Write-Host $_.Exception.message -ForegroundColor Red
+        Write-Error $_.Exception.message
         Exit
     }
-    Write-Host "Microsoft Graph PowerShell module is connected successfully" -ForegroundColor Cyan
+    Write-Information "Microsoft Graph PowerShell module is connected successfully" -ForegroundColor Cyan
 }
 
 Function Disconnect-Modules
@@ -113,7 +113,7 @@ if($CSVFilePath)
     }
     catch
     {
-        Write-Host $_.Exception.Message -ForegroundColor Red
+        Write-Error $_.Exception.Message
         Exit
     }
 
@@ -137,7 +137,7 @@ elseif($UserId)
 
 Foreach( $account in $AccountList)
 {
-    Write-Host "Processing", $account['UserId']
+    Write-Information "Processing", $account['UserId']
 
     # Check to see if the manager is being updated since that requires a separate process
     if($account['Manager'])
@@ -153,7 +153,7 @@ Foreach( $account in $AccountList)
         }
         catch
         {
-            Write-Host $_.Exception.Message -ForegroundColor Red
+            Write-Error $_.Exception.Message
         }
 
         #Remove the Manager field before continuing to process
@@ -168,7 +168,7 @@ Foreach( $account in $AccountList)
     }
     catch
     {
-        Write-Host $_.Exception.Message -ForegroundColor Red
+        Write-Error $_.Exception.Message
     }
 
 }
