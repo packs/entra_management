@@ -52,7 +52,7 @@ param(
     [Parameter(Mandatory = $false)][string]$TenantId,
     [Parameter(Mandatory = $false)][string]$ClientId,
     [Parameter(Mandatory = $false)][string]$CertificateThumbprint,
-    [Parameter(Mandatory = $false)][switch]$NoWelcome = $true,
+    [Parameter(Mandatory = $false)][bool]$NoWelcome = $true,
     [Parameter(Mandatory = $false)][ValidateSet("Global","USGov","USGovDoD","China")][string]$Environment
 )
 
@@ -68,8 +68,8 @@ Function Connect-Modules
 
     try
     {
-        Connect-MgGraph @mgParams
-        if($ConnectionError -ne $null)
+        Connect-MgGraph @MgParams
+        if($ConnectionError.Count -gt 0)
         {
             Write-Error $ConnectionError
             Exit
