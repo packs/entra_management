@@ -183,7 +183,7 @@ function Get-AzureRoleAssignments {
         }
     }
 
-    Write-Host "Completed processing subscriptions. Total role assignments found: $($roleResults.Count)"
+    Write-Verbose "Completed processing subscriptions. Total role assignments found: $($roleResults.Count)"
     return $roleResults
 }
 
@@ -215,7 +215,7 @@ Function Main
         $subscriptions = $allSubscriptions
     }
 
-    Write-Output "Found $($subscriptions.Count) subscription(s) to process."
+    Write-Verbose "Found $($subscriptions.Count) subscription(s) to process."
 
     # Build parameter set for Azure role retrieval for splatting, in case principal filtering is not used
     $azureParams = @{}
