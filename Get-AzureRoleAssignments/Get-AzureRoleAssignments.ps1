@@ -42,7 +42,7 @@ function Connect-Modules {
     param([hashtable]$ModuleParams)
 
     $mgParams = @{}
-    $mgParams['Scopes']        = @("Directory.ReadWrite.All", "User.ReadWrite.All")
+    $mgParams['Scopes']        = @("Directory.Read.All", "User.Read.All")
     $mgParams['ErrorAction']   = 'SilentlyContinue'
     $mgParams['ErrorVariable'] = 'ConnectionError'
 
