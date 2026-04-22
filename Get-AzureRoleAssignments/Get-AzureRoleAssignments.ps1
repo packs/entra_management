@@ -203,7 +203,14 @@ Function Main
     Connect-Modules -ModuleParams $mgParams
 
     # Fetch and, if requested, filter subscriptions
-    $allSubscriptions = Get-AzSubscription
+    try {
+        $allSubscriptions = Get-AzSubscription
+    }
+    catch {
+        Write-Error "Failed to retrieve Azure subscriptions: $_"
+        Disconnect-Modules
+        return
+    }
     if ($SubscriptionIds -and $SubscriptionIds.Count -gt 0) {
         $subscriptions = $allSubscriptions | Where-Object { $SubscriptionIds -contains $_.Id }
         $missing = $SubscriptionIds | Where-Object { $allSubscriptions.Id -notcontains $_ }
