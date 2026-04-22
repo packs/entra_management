@@ -154,7 +154,7 @@ function Connect-Modules {
     $azParams = @{}
     if ($ModuleParams.ContainsKey('TenantId'))    { $azParams['TenantId']    = $ModuleParams['TenantId'] }
     if ($ModuleParams.ContainsKey('Credential'))  { $azParams['Credential']  = $ModuleParams['Credential'] }
-    if ($ModuleParams.ContainsKey('ServicePrincipal') -and $ServicePrincipal) { $azParams['ServicePrincipal'] = $true }
+    if ($ModuleParams.ContainsKey('ServicePrincipal') -and $ModuleParams['ServicePrincipal'] ) { $azParams['ServicePrincipal'] = $true }
     if ($ModuleParams.ContainsKey('Environment')) { $azParams['Environment']  = $ModuleParams['Environment'] }
     if ($ModuleParams.ContainsKey('CertificateThumbprint')) { $azParams['CertificateThumbprint'] = $ModuleParams['CertificateThumbprint'] }
 
@@ -227,13 +227,10 @@ function Get-AzureRoleAssignments {
 
         # Filter to specified principals if provided
         if ($PSBoundParameters.ContainsKey('PrincipalDisplayNames')) {
-            write-host "Filtering role assignments for subscription '$($sub.Name)' by $principalDisplayNames...."
             $roleAssignments = $roleAssignments | Where-Object {
                 $PrincipalDisplayNames -contains $_.DisplayName
             }
         }
-
-        Write-Host "Found $($roleAssignments.Count) role assignment(s) in subscription '$($sub.Name)' after filtering by principal display names."
 
         foreach ($assignment in $roleAssignments) {
             # Determine scope level
@@ -286,7 +283,10 @@ Function Main
     if ($BoundParams.ContainsKey('Environment'))          { $mgParams['Environment']          = $BoundParams['Environment'] }
     $mgParams['NoWelcome'] = $NoWelcome
 
-    Connect-Modules -ModuleParams $mgParams
+    if (-not (Connect-Modules -ModuleParams $mgParams)) {
+        Write-Error "Module connection failed. Exiting script."
+        return
+    }
 
     # Fetch and, if requested, filter subscriptions
     try {
@@ -311,12 +311,12 @@ Function Main
 
     # Build parameter set for Azure role retrieval for splatting, in case principal filtering is not used
     $azureParams = @{}
-    if ($BoundParams.ContainsKey('PrincipalDisplayNames'))  { $azureParams['PrincipalDisplayNames'] = $PrincipalDisplayNames }
+    if ($BoundParams.ContainsKey('PrincipalDisplayNames'))  { $azureParams['PrincipalDisplayNames'] = $BoundParams['PrincipalDisplayNames'] }
 
     $results = Get-AzureRoleAssignments -Subscriptions $subscriptions @azureParams
 
     # Let's finally write out the results
-    if ($results.Count -eq 0) {
+    if ($null -eq $results -or $results.Count -eq 0) {
         Write-Warning "No role assignments found. No output file written."
     }
     else {
