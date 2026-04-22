@@ -47,15 +47,15 @@ function Connect-Modules {
     $mgParams['ErrorVariable'] = 'ConnectionError'
 
     # --- Connect-MgGraph ---
-    if ($ModuleParams.ContainsKey('NoWelcome'))            { $mgParams['NoWelcome']            = $NoWelcome }
-    if ($ModuleParams.ContainsKey('TenantId'))             { $mgParams['TenantId']             = $TenantId }
-    if ($ModuleParams.ContainsKey('ClientId'))             { $mgParams['ClientId']             = $ClientId }
-    if ($ModuleParams.ContainsKey('ClientSecret'))         { $mgParams['ClientSecret']         = $ClientSecret }
-    if ($ModuleParams.ContainsKey('CertificateThumbprint')){ $mgParams['CertificateThumbprint'] = $CertificateThumbprint }
-    if ($ModuleParams.ContainsKey('CertificateName'))      { $mgParams['CertificateName']      = $CertificateName }
+    if ($ModuleParams.ContainsKey('NoWelcome'))            { $mgParams['NoWelcome']            = $ModuleParams['NoWelcome'] }
+    if ($ModuleParams.ContainsKey('TenantId'))             { $mgParams['TenantId']             = $ModuleParams['TenantId'] }
+    if ($ModuleParams.ContainsKey('ClientId'))             { $mgParams['ClientId']             = $ModuleParams['ClientId'] }
+    if ($ModuleParams.ContainsKey('ClientSecret'))         { $mgParams['ClientSecret']         = $ModuleParams['ClientSecret'] }
+    if ($ModuleParams.ContainsKey('CertificateThumbprint')){ $mgParams['CertificateThumbprint'] = $ModuleParams['CertificateThumbprint'] }
+    if ($ModuleParams.ContainsKey('CertificateName'))      { $mgParams['CertificateName']      = $ModuleParams['CertificateName'] }
 
     try {
-        Connect-MgGraph @mgParams -ErrorAction Stop
+        Connect-MgGraph @mgParams
         $script:ConnectedServices.MgGraph = $true
         Write-Host "Connected to Microsoft Graph."
     }
@@ -66,12 +66,11 @@ function Connect-Modules {
 
     # --- Connect-AzAccount ---
     $azParams = @{}
-    if ($ModuleParams.ContainsKey('TenantId'))    { $azParams['TenantId']    = $TenantId }
-    if ($ModuleParams.ContainsKey('Credential'))  { $azParams['Credential']  = $Credential }
+    if ($ModuleParams.ContainsKey('TenantId'))    { $azParams['TenantId']    = $ModuleParams['TenantId'] }
+    if ($ModuleParams.ContainsKey('Credential'))  { $azParams['Credential']  = $ModuleParams['Credential'] }
     if ($ModuleParams.ContainsKey('ServicePrincipal') -and $ServicePrincipal) { $azParams['ServicePrincipal'] = $true }
-    if ($ModuleParams.ContainsKey('Environment')) { $azParams['Environment']  = $Environment }
-    if ($ModuleParams.ContainsKey('CertificateThumbprint')) { $azParams['CertificateThumbprint'] = $CertificateThumbprint }
-    if ($ModuleParams.ContainsKey('ApplicationId')) { $azParams['ApplicationId'] = $ApplicationId }
+    if ($ModuleParams.ContainsKey('Environment')) { $azParams['Environment']  = $ModuleParams['Environment'] }
+    if ($ModuleParams.ContainsKey('CertificateThumbprint')) { $azParams['CertificateThumbprint'] = $ModuleParams['CertificateThumbprint'] }
 
     try {
         # Connect to Azure without showing warnings (e.g., about missing context) and stop on errors. A little gross, but the best analog to Graph's NoWelcome.
@@ -193,12 +192,12 @@ Function Main
     param([hashtable]$BoundParams)
 
     $mgParams = @{}
-    if ($BoundParams.ContainsKey('TenantId'))             { $mgParams['TenantId']             = $TenantId }
-    if ($BoundParams.ContainsKey('ClientId'))             { $mgParams['ClientId']             = $ClientId}
-    if ($BoundParams.ContainsKey('ClientSecret'))         { $mgParams['ClientSecret']         = $ClientSecret}
-    if ($BoundParams.ContainsKey('CertificateThumbprint')){ $mgParams['CertificateThumbprint']= $CertificateThumbprint }
-    if ($BoundParams.ContainsKey('CertificateName'))      { $mgParams['CertificateName']      = $CertificateName }
-    if ($BoundParams.ContainsKey('Environment'))          { $mgParams['Environment']          = $Environment}
+    if ($BoundParams.ContainsKey('TenantId'))             { $mgParams['TenantId']             = $BoundParams['TenantId'] }
+    if ($BoundParams.ContainsKey('ClientId'))             { $mgParams['ClientId']             = $BoundParams['ClientId'] }
+    if ($BoundParams.ContainsKey('ClientSecret'))         { $mgParams['ClientSecret']         = $BoundParams['ClientSecret'] }
+    if ($BoundParams.ContainsKey('CertificateThumbprint')){ $mgParams['CertificateThumbprint']= $BoundParams['CertificateThumbprint'] }
+    if ($BoundParams.ContainsKey('CertificateName'))      { $mgParams['CertificateName']      = $BoundParams['CertificateName'] }
+    if ($BoundParams.ContainsKey('Environment'))          { $mgParams['Environment']          = $BoundParams['Environment'] }
     $mgParams['NoWelcome'] = $NoWelcome
 
     Connect-Modules -ModuleParams $mgParams
