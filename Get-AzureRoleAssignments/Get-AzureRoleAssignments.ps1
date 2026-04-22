@@ -1,13 +1,99 @@
 <#
     .SYNOPSIS
-        This script accepts an Entra security group and enumerates all of the Azure roles and permissions assigned to the provided group across all subscriptions.
+        Enumerates all direct Azure IAM role assignments across one or more subscriptions and exports the results to CSV.
+
+    .DESCRIPTION
+        Get-AzureRoleAssignments connects to Microsoft Graph and Azure, then retrieves all direct (non-inherited)
+        Azure role assignments across every subscription the authenticated account has access to. Results are
+        written to a timestamped CSV file suitable for use in access reviews.
+
+        By default the script queries all accessible subscriptions and returns assignments for all principals.
+        Both behaviors can be narrowed using the -SubscriptionIds and -PrincipalDisplayNames parameters
+        respectively.
+
+        Authentication defaults to interactive login for both Microsoft Graph and Azure. Service principal
+        authentication is supported via credential, certificate thumbprint, or certificate name.
+
+    .PARAMETER PrincipalDisplayNames
+        Optional. One or more principal display names to filter results by. When provided, only role assignments
+        where the principal's display name matches an entry in this list will be returned. When omitted, all
+        principals are included.
+
+    .PARAMETER SubscriptionIds
+        Optional. One or more subscription GUIDs to scope the query to. When provided, only the specified
+        subscriptions are queried. When omitted, all subscriptions accessible to the authenticated account
+        are queried.
+
+    .PARAMETER OutputPath
+        Optional. The directory path where the output CSV file will be written. Defaults to the current
+        working directory. The filename is auto-generated in the format AzureRoleAssignments_yyyyMMdd_HHmmss.csv.
+
+    .PARAMETER TenantId
+        Optional. The Entra tenant ID to authenticate against. Used by both Connect-MgGraph and
+        Connect-AzAccount. When omitted, the default tenant for the authenticated account is used.
+
+    .PARAMETER ClientId
+        Optional. The application (client) ID to use for Microsoft Graph authentication when authenticating
+        as a service principal.
+
+    .PARAMETER ClientSecret
+        Optional. The client secret for service principal authentication against Microsoft Graph.
+        Must be provided as a SecureString.
+
+    .PARAMETER CertificateThumbprint
+        Optional. The thumbprint of a certificate to use for service principal authentication. Applies
+        to both Microsoft Graph and Azure connections.
+
+    .PARAMETER CertificateName
+        Optional. The name of a certificate to use for Microsoft Graph service principal authentication.
+
+    .PARAMETER Credential
+        Optional. A PSCredential object for Azure authentication. Typically used for service principal
+        or username/password flows.
+
+    .PARAMETER ServicePrincipal
+        Optional. Switch indicating that the provided credentials represent a service principal rather
+        than a user account. Used with Connect-AzAccount.
+
+    .PARAMETER Environment
+        Optional. The Azure environment to connect to (e.g., AzureCloud, AzureUSGovernment, AzureChinaCloud).
+        Defaults to AzureCloud when omitted.
+
+    .PARAMETER NoWelcome
+        Optional. Suppresses the Microsoft Graph welcome message on connect. Defaults to $true.
+
+    .EXAMPLE
+        .\Get-AzureRoleAssignments.ps1
+
+        Connects interactively and exports all direct Azure role assignments across all accessible
+        subscriptions to a timestamped CSV in the current directory.
+
+    .EXAMPLE
+        .\Get-AzureRoleAssignments.ps1 -SubscriptionIds 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' -PrincipalDisplayNames 'Finance Team', 'Security Admins' -OutputPath 'C:\AccessReviews'
+
+        Connects interactively, queries a single subscription, filters results to two named principals,
+        and writes the output CSV to C:\AccessReviews.
+
+    .EXAMPLE
+        .\Get-AzureRoleAssignments.ps1 -TenantId 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' -ClientId 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' -CertificateThumbprint 'ABC123...' -ServicePrincipal
+
+        Authenticates as a service principal using a certificate against the specified tenant and exports
+        all role assignments across all accessible subscriptions.
 
     .NOTES
         Scott Pack
         scott.pack@gmail.com
 
-        Last Update: 28 August 2025
+        Last Update: 22 April 2026
         Version 1.0
+
+        Requires the following PowerShell modules:
+            - Microsoft.Graph (Connect-MgGraph)
+            - Az (Connect-AzAccount, Get-AzSubscription, Get-AzRoleAssignment, Get-AzRoleDefinition)
+
+        Microsoft Graph scopes required:
+            - Directory.Read.All
+            - User.Read.All
 #>
 
 
