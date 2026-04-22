@@ -111,6 +111,82 @@ function Disconnect-Modules {
     }
 }
 
+function Get-AzureRoleAssignments {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)][object[]]$Subscriptions,
+        [Parameter()][string[]]$PrincipalDisplayNames
+    )
+
+    $roleResults = [System.Collections.Generic.List[PSCustomObject]]::new()
+
+    # Iterate through each subscription that's been passed
+    foreach ($sub in $Subscriptions) {
+        Write-Verbose "Processing subscription '$($sub.Name)' ($($sub.Id))..."
+        try {
+            Set-AzContext -SubscriptionId $sub.Id -ErrorAction Stop | Out-Null
+        }
+        catch {
+            Write-Warning "Could not set context for subscription '$($sub.Name)' ($($sub.Id)): $_"
+            continue
+        }
+
+        try {
+            $roleAssignments = Get-AzRoleAssignment -ErrorAction Stop
+        }
+        catch {
+            Write-Warning "Could not retrieve role assignments for subscription '$($sub.Name)' ($($sub.Id)): $_"
+            continue
+        }
+
+        # Filter to specified principals if provided
+        if ($PSBoundParameters.ContainsKey('PrincipalDisplayNames')) {
+            write-host "Filtering role assignments for subscription '$($sub.Name)' by $principalDisplayNames...."
+            $roleAssignments = $roleAssignments | Where-Object {
+                $PrincipalDisplayNames -contains $_.DisplayName
+            }
+        }
+
+        Write-Host "Found $($roleAssignments.Count) role assignment(s) in subscription '$($sub.Name)' after filtering by principal display names."
+
+        foreach ($assignment in $roleAssignments) {
+            # Determine scope level
+            $scopeLevel = switch -Regex ($assignment.Scope) {
+                '\/providers\/Microsoft\.Management\/managementGroups\/' { 'ManagementGroup' }
+                '^\/subscriptions\/[^\/]+$'                              { 'Subscription'    }
+                '\/resourceGroups\/[^\/]+$'                              { 'ResourceGroup'   }
+                '\/resourceGroups\/.+\/'                                 { 'Resource'        }
+                default                                                  { 'Unknown'         }
+            }
+
+            try {
+                $roleDef = Get-AzRoleDefinition -Id $assignment.RoleDefinitionId -ErrorAction Stop
+                $roleName = $roleDef.Name
+            }
+            catch {
+                Write-Warning "Could not resolve role definition '$($assignment.RoleDefinitionId)' in subscription '$($sub.Name)': $_"
+                $roleName = $assignment.RoleDefinitionId
+            }
+
+            $roleResults.Add([PSCustomObject]@{
+                PrincipalDisplayName = $assignment.DisplayName
+                PrincipalObjectId    = $assignment.ObjectId
+                PrincipalType        = $assignment.ObjectType
+                Type                 = 'Azure Role'
+                RoleOrApp            = $roleName
+                Scope                = $assignment.Scope
+                ScopeLevel           = $scopeLevel
+                Subscription         = $sub.Name
+                SubscriptionId       = $sub.Id
+            })
+        }
+    }
+
+    Write-Host "Completed processing subscriptions. Total role assignments found: $($roleResults.Count)"
+    return $roleResults
+}
+
+
 Function Main
 {
     param([hashtable]$BoundParams)
